@@ -13,11 +13,12 @@
 PluginProcessor::PluginProcessor() :
     AudioProcessor(BusesProperties()
         .withInput("Input", AudioChannelSet::discreteChannels(64), true)
-        .withOutput("Output", AudioChannelSet::discreteChannels(64), true))
+        .withOutput("Output", AudioChannelSet::discreteChannels(64), true)),
+    time_reporter("127.0.0.1", 8765)
 {
     nSampleRate = 48000;
     nHostBlockSize = -1;
-    tvconv_create(&hTVCnv);
+    tvconv_create(&hTVCnv, &time_reporter);
     
     // (@todo) to be automated
     enable_rotation = true;
@@ -55,12 +56,13 @@ PluginProcessor::~PluginProcessor()
 
 //==============================================================================
 
-
 void PluginProcessor::oscMessageReceived(const OSCMessage& message)
 {
+    auto t_osc_recv = time_reporter.get_timestamp();
+
     DBG_OSC("osc received: ", message);
 
-    if (message.size() == 3 && message.getAddressPattern().toString().compare("xyz")) {
+    if (message.size() == 3 && message.getAddressPattern().toString() == "/xyz") {
         if (message[0].isFloat32())
             setParameterRaw(0, message[0].getFloat32());
         if (message[1].isFloat32())
@@ -70,7 +72,7 @@ void PluginProcessor::oscMessageReceived(const OSCMessage& message)
         return;
     }
     
-    else if (message.size() == 7 && message.getAddressPattern().toString().compare("xyzquat")) {
+    else if (message.size() == 7 && message.getAddressPattern().toString() == "/xyzquat") {
         if (message[0].isFloat32())
             setParameterRaw(0, message[0].getFloat32());
         if (message[1].isFloat32())
@@ -88,7 +90,12 @@ void PluginProcessor::oscMessageReceived(const OSCMessage& message)
         return;
     }
 
-    else if (message.size() == 6 && message.getAddressPattern().toString().compare("xyzypr")) {
+    else if (message.size() == 7 && message.getAddressPattern().toString() == "/xyzypr") {
+        int oscId = -1;
+        if (message[6].isInt32()) {
+            oscId = message[6].getInt32();
+        }
+
         if (message[0].isFloat32())
             setParameterRaw(0, message[0].getFloat32());
         if (message[1].isFloat32())
@@ -101,6 +108,14 @@ void PluginProcessor::oscMessageReceived(const OSCMessage& message)
             rotator_setPitch(hRot, message[4].getFloat32());
         if (message[5].isFloat32())
             rotator_setRoll(hRot, message[5].getFloat32());
+        
+        auto t_params_done = time_reporter.get_timestamp();
+
+        if (message[6].isInt32()) {
+            time_reporter.report("osc_recv", oscId, t_osc_recv);
+            time_reporter.report("params_done", oscId, t_params_done);
+            tvconv_setOscId(hTVCnv, oscId);
+        }
 
         return;
     }

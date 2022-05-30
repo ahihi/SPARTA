@@ -16,6 +16,7 @@
 #ifndef MIN
 # define MIN(a,b) (( (a) < (b) ) ? (a) : (b))
 #endif
+#include "../../../SDKs/timereporter/timereporter.h"
 #ifndef MAX
 # define MAX(a,b) (( (a) > (b) ) ? (a) : (b))
 #endif
@@ -118,6 +119,7 @@ private:
     bool osc_connected;
     int osc_port_ID;
     bool enable_rotation;
+    TimeReporter time_reporter;
     
     
 /***************************************************************************\
