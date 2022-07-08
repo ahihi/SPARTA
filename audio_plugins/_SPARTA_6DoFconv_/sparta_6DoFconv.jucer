@@ -7,6 +7,14 @@
               companyEmail="rapolas.daugintis@gmail.com" pluginManufacturerCode="RAPD"
               pluginCode="TVCN" displaySplashScreen="1" version="1.0.0" headerPath="C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/include&#10;../../../../../SDKs/NatNetSDK/include&#10;../../../src/NatNetTools">
   <MAINGROUP id="IbvuHL" name="sparta_6DoFconv">
+    <GROUP id="{96C6E21C-5BE4-4081-8142-A4CE1A447F7F}" name="timereporter">
+      <FILE id="rjlc4z" name="ctimereporter.cpp" compile="1" resource="0"
+            file="../../SDKs/timereporter/ctimereporter.cpp"/>
+      <FILE id="HVDnMD" name="ctimereporter.h" compile="0" resource="0" file="../../SDKs/timereporter/ctimereporter.h"/>
+      <FILE id="crMiF0" name="timereporter.cpp" compile="1" resource="0"
+            file="../../SDKs/timereporter/timereporter.cpp"/>
+      <FILE id="whfUVz" name="timereporter.h" compile="0" resource="0" file="../../SDKs/timereporter/timereporter.h"/>
+    </GROUP>
     <GROUP id="{292064C3-D074-003C-6E95-DB7EEDC5973F}" name="NatNetTools">
       <FILE id="LFIejC" name="MathUtils.cpp" compile="1" resource="0" file="src/NatNetTools/MathUtils.cpp"/>
       <FILE id="iiFbil" name="MathUtils.h" compile="0" resource="0" file="src/NatNetTools/MathUtils.h"/>
@@ -312,15 +320,15 @@
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
   <EXPORTFORMATS>
-    <VS2017 targetFolder="make/win64/VisualStudio2017/" extraDefs="SAF_ENABLE_SOFA_READER_MODULE  &#10;SAF_ENABLE_NETCDF&#10;SAF_USE_INTEL_MKL_LP64 "
+    <VS2017 targetFolder="make/win64/VisualStudio2017/" extraDefs="SAF_ENABLE_SOFA_READER_MODULE&#10;SAF_ENABLE_NETCDF&#10;SAF_USE_INTEL_MKL_LP64&#10;TIMEREPORTER_ENABLE&#10;TIMEREPORTER_JUCE_OSC"
             extraCompilerFlags="/bigobj" externalLibraries="saf_mkl_custom_lp64.lib&#10;netcdf.lib&#10;libhdf5.lib&#10;libhdf5_hl.lib&#10;libszip.lib&#10;delayimp.lib&#10;NatNetLib.lib"
             userNotes="SAF_ENABLE_NETCDF&#10;netcdf.lib&#10;libhdf5.lib&#10;libhdf5_hl.lib&#10;libszip.lib"
             extraLinkerFlags="/DELAYLOAD:NatNetLib.dll">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="sparta_6DoFconv_debug" headerPath="../../../../../SDKs/Spatial_Audio_Framework/framework/include&#10;../../../../../SDKs/Spatial_Audio_Framework/examples/include&#10;../../../../../SDKs/Spatial_Audio_Framework/dependencies/Win64/include&#10;../../../../../SDKs/VST2_SDK&#10;C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/include&#10;C:\Program Files (x86)\Intel\oneAPI\mkl\2022.0.0\include"
+        <CONFIGURATION isDebug="1" name="Debug" targetName="sparta_6DoFconv_debug" headerPath="../../../../../SDKs/Spatial_Audio_Framework/framework/include&#10;../../../../../SDKs/Spatial_Audio_Framework/examples/include&#10;../../../../../SDKs/Spatial_Audio_Framework/dependencies/Win64/include&#10;../../../../../SDKs/VST2_SDK&#10;../../../../../SDKs/timereporter&#10;C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/include&#10;C:\Program Files (x86)\Intel\oneAPI\mkl\2022.0.0\include"
                        libraryPath="../../../../../SDKs/Spatial_Audio_Framework/dependencies/Win64/lib&#10;../../../../../SDKs/NatNetSDK/lib/x64"
                        linkTimeOptimisation="1" postbuildCommand="..\..\..\scripts\postbuild.bat &quot;$(ProjectName)&quot; &quot;$(OutDir)&quot;"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="sparta_6DoFconv" headerPath="../../../../../SDKs/Spatial_Audio_Framework/framework/include&#10;../../../../../SDKs/Spatial_Audio_Framework/examples/include&#10;../../../../../SDKs/Spatial_Audio_Framework/dependencies/Win64/include&#10;../../../../../SDKs/VST2_SDK&#10;C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/include&#10;C:\Program Files (x86)\Intel\oneAPI\mkl\2022.0.0\include"
+        <CONFIGURATION isDebug="0" name="Release" targetName="sparta_6DoFconv" headerPath="../../../../../SDKs/Spatial_Audio_Framework/framework/include&#10;../../../../../SDKs/Spatial_Audio_Framework/examples/include&#10;../../../../../SDKs/Spatial_Audio_Framework/dependencies/Win64/include&#10;../../../../../SDKs/VST2_SDK&#10;../../../../../SDKs/timereporter&#10;C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/include&#10;C:\Program Files (x86)\Intel\oneAPI\mkl\2022.0.0\include"
                        libraryPath="../../../../../SDKs/Spatial_Audio_Framework/dependencies/Win64/lib&#10;../../../../../SDKs/NatNetSDK/lib/x64"
                        postbuildCommand="..\..\..\scripts\postbuild.bat &quot;$(ProjectName)&quot; &quot;$(OutDir)&quot;"/>
       </CONFIGURATIONS>

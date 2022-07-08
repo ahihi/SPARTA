@@ -24,6 +24,10 @@
 #include "RigidBodyCollection.h"
 #include "TransformedData.h"
 
+#ifdef TIMEREPORTER_ENABLE
+#include "timereporter.h"
+#endif
+
 #define BUILD_VER_SUFFIX0 "alpha" /* String to be added before the version name on the GUI (beta, alpha etc..) */
 #ifndef NDEBUG
 #define BUILD_VER_SUFFIX (BUILD_VER_SUFFIX0 " (DEBUG)")
@@ -167,7 +171,11 @@ private:
     // Currently only transforming data for one rigid body, so don't bother with a collection
     TransformedData transData;
 
-
+#ifdef TIMEREPORTER_ENABLE
+    TimeReporter timeReporter;
+    size_t callbackId = 0;
+    size_t blockId = 0;
+#endif
     
 /***************************************************************************\
                     JUCE Functions

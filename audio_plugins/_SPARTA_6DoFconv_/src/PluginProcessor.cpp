@@ -18,6 +18,9 @@ PluginProcessor::PluginProcessor() :
     AudioProcessor(BusesProperties()
         .withInput("Input", AudioChannelSet::discreteChannels(64), true)
         .withOutput("Output", AudioChannelSet::discreteChannels(64), true))
+#ifdef TIMEREPORTER_ENABLE
+    , timeReporter("127.0.0.1", 8765)
+#endif
 {
     jassert(thePluginProcessor == nullptr);
     thePluginProcessor = this;
@@ -62,12 +65,11 @@ PluginProcessor::~PluginProcessor()
 
 //==============================================================================
 
-
 void PluginProcessor::oscMessageReceived(const OSCMessage& message)
 {
     DBG_OSC("osc received: ", message);
 
-    if (message.size() == 3 && message.getAddressPattern().toString().compare("xyz")) {
+    if (message.size() == 3 && message.getAddressPattern().toString() == "/xyz") {
         if (message[0].isFloat32())
             setParameterRaw(0, message[0].getFloat32());
         if (message[1].isFloat32())
@@ -77,7 +79,7 @@ void PluginProcessor::oscMessageReceived(const OSCMessage& message)
         return;
     }
     
-    else if (message.size() == 7 && message.getAddressPattern().toString().compare("xyzquat")) {
+    else if (message.size() == 7 && message.getAddressPattern().toString() == "/xyzquat") {
         if (message[0].isFloat32())
             setParameterRaw(0, message[0].getFloat32());
         if (message[1].isFloat32())
@@ -95,7 +97,12 @@ void PluginProcessor::oscMessageReceived(const OSCMessage& message)
         return;
     }
 
-    else if (message.size() == 6 && message.getAddressPattern().toString().compare("xyzypr")) {
+    else if (message.size() == 7 && message.getAddressPattern().toString() == "/xyzypr") {
+        int oscId = -1;
+        if (message[6].isInt32()) {
+            oscId = message[6].getInt32();
+        }
+
         if (message[0].isFloat32())
             setParameterRaw(0, message[0].getFloat32());
         if (message[1].isFloat32())
@@ -108,7 +115,7 @@ void PluginProcessor::oscMessageReceived(const OSCMessage& message)
             rotator_setPitch(hRot, message[4].getFloat32());
         if (message[5].isFloat32())
             rotator_setRoll(hRot, message[5].getFloat32());
-
+        
         return;
     }
 }
@@ -293,6 +300,10 @@ bool PluginProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 
 void PluginProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& /*midiMessages*/)
 {
+#ifdef TIMEREPORTER_ENABLE
+    timeReporter.report_now("processBlock_start", blockId);
+#endif
+
     int nCurrentBlockSize = nHostBlockSize = buffer.getNumSamples();
     nNumInputs = jmin(getTotalNumInputChannels(), buffer.getNumChannels());
     nNumOutputs = jmin(getTotalNumOutputChannels(), buffer.getNumChannels());
@@ -317,6 +328,10 @@ void PluginProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Midi
             buffer.clear();
     }
 
+#ifdef TIMEREPORTER_ENABLE
+    timeReporter.report_now("processBlock_end", blockId);
+    blockId++;
+#endif
 }
 
 //==============================================================================
@@ -490,6 +505,10 @@ void PluginProcessor::sendNatNetConnMessage(const String& message) {
 }
 
 void PluginProcessor::handleNatNetData(sFrameOfMocapData* data, void* pUserData) {
+#ifdef TIMEREPORTER_ENABLE
+    timeReporter.report_now("handleNatNetData_start", callbackId);
+#endif
+
     int mcount = min(MarkerPositionCollection::MAX_MARKER_COUNT, data->MocapData->nMarkers);
     markerPositions.SetMarkerPositions(data->MocapData->Markers, mcount);
 
@@ -535,6 +554,11 @@ void PluginProcessor::handleNatNetData(sFrameOfMocapData* data, void* pUserData)
     // decode timecode into friendly string
     NatNet_TimecodeStringify(data->Timecode, data->TimecodeSubframe, szTimecode, 128);
     */
+
+#ifdef TIMEREPORTER_ENABLE
+    timeReporter.report_now("handleNatNetData_end", callbackId);
+    callbackId++;
+#endif
 }
 
 void PluginProcessor::handleNatNetMessage(Verbosity msgType, const char* msg) {
